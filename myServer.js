@@ -17,28 +17,37 @@ app.use(function (req, res, next) {
 var port = process.env.PORT || 2450;
 app.listen(port, () => console.log(`Node app listening on port ${port}!`));
 let axios = require("axios");
-let baseURL = "https://stud-service-app.onrender.com";
+//let baseURL = "https://stud-service-app.onrender.com";
 
 app.post("/myserver/data", async function(req,res){
 	try {
+		const { performance } = require("perf_hooks");
+		const t0 = performance.now();
 		let body = req.body;
 		if(body.method === "GET") {
-			let response = await axios.get(baseURL + body.fetchURL);
+			console.log(body.fetchURL);
+			let response = await axios.get(body.fetchURL);
+			const t2 = performance.now();
+			let timeTaken = t2 - t0;
+			res.send({data: response.data, status :200+" OK", timeTaken : timeTaken});
 			console.log(response.data);
-			res.send(response.data);
+			//res.send(response.data);
 		}
 		else if(body.method === "POST") {
-			let response = await axios.post(baseURL + body.fetchURL, body.data);
-			console.log(response.data);
-			res.send(response.data);
+			let response = await axios.post(body.fetchURL, body.data);
+			const t2 = performance.now();
+			let timeTaken = t2 - t0;
+			console.log(response.data.courses);
+			//res.send(response.data);
+			res.send({data: response.data, status :200+" OK", timeTaken : timeTaken});
 		}
 	}
 	catch (error) {
 		if(error.response) {
 			let {status,statusText} = error.response;
 			console.log("Error::", status,statusText);
-			res.status(status).send(statusText);
+			res.send({errorCode: status, errorMessage: statusText});
 		}
-		else res.status(404).send(error);
+		else res.send({errorCode: 401, errorMessage: error});
 	}
 });
