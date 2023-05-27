@@ -24,30 +24,109 @@ app.post("/myserver/data", async function(req,res){
 		const { performance } = require("perf_hooks");
 		const t0 = performance.now();
 		let body = req.body;
-		if(body.method === "GET") {
-			console.log(body.fetchURL);
-			let response = await axios.get(body.fetchURL);
+		console.log(body);
+		if(body.req === "GET") {
+			console.log(body.url);
+			let response = {};
+			if(body.headerKey1 === "Authorization" && body.headerValue1) {
+				response = await axios.get(body.url, { headers: { authorization: body.headerValue1 }});
+			}
+			else if(body.headerKey2 === "Authorization" && body.headerValue2) {
+				response = await axios.get(body.url, { headers: { authorization: body.headerValue2 }});
+			}
+			else if(body.headerKey3 === "Authorization" && body.headerValue3) {
+				response = await axios.get(body.url, { headers: { authorization: body.headerValue3 }});
+			}
+			else {
+				response = await axios.get(body.url);
+			}
+				const t2 = performance.now();
+				let timeTaken = t2 - t0;
+				res.send({data: response.data, status :200+" OK", timeTaken : timeTaken});
+				console.log(response.data);
+			}
+
+			//res.send(response.data);
+		else if(body.req === "POST") {
+			console.log("Post",body);
+			let response = {};
+			if(body.headerKey1 === "Authorization" && body.headerValue1) {
+				response = await axios.post(body.url, body.body, { headers: { authorization: body.headerValue1 }});
+			}
+			else if(body.headerKey2 === "Authorization" && body.headerValue2) {
+				response = await axios.post(body.url, body.body, { headers: { authorization: body.headerValue2 }});
+			}
+			else if(body.headerKey3 === "Authorization" && body.headerValue3) {
+				response = await axios.post(body.url, body.body, { headers: { authorization: body.headerValue3 }});
+			}
+			else {
+				response = await axios.post(body.url, body.body);
+			}
+			//let response = await axios.post(body.url, body.body);
+			const t2 = performance.now();
+			let timeTaken = t2 - t0;
+			console.log(response.data.courses);
+			res.send({data: response.data, status :200+" OK", timeTaken : timeTaken});
+		}
+		else if(body.req === "PUT") {
+			console.log("Put",body);
+			let response = {};
+			if(body.headerKey1 === "Authorization" && body.headerValue1) {
+				response = await axios.put(body.url, body.body, { headers: { authorization: body.headerValue1 }});
+			}
+			else if(body.headerKey2 === "Authorization" && body.headerValue2) {
+				response = await axios.put(body.url, body.body, { headers: { authorization: body.headerValue2 }});
+			}
+			else if(body.headerKey3 === "Authorization" && body.headerValue3) {
+				response = await axios.put(body.url, body.body, { headers: { authorization: body.headerValue3 }});
+			}
+			else {
+				response = await axios.put(body.url, body.body);
+			}
+			//let response = await axios.put(body.url, body.body);
 			const t2 = performance.now();
 			let timeTaken = t2 - t0;
 			res.send({data: response.data, status :200+" OK", timeTaken : timeTaken});
 			console.log(response.data);
-			//res.send(response.data);
 		}
-		else if(body.method === "POST") {
-			let response = await axios.post(body.fetchURL, body.data);
+		else if(body.req === "DELETE") {
+			console.log("Delete", body);
+			let response = {};
+			if(body.headerKey1 === "Authorization" && body.headerValue1) {
+				response = await axios.delete(body.url, { headers: { authorization: body.headerValue1 }});
+			}
+			else if(body.headerKey2 === "Authorization" && body.headerValue2) {
+				response = await axios.delete(body.url, { headers: { authorization: body.headerValue2 }});
+			}
+			else if(body.headerKey3 === "Authorization" && body.headerValue3) {
+				response = await axios.delete(body.url, { headers: { authorization: body.headerValue3 }});
+			}
+			else {
+				response = await axios.delete(body.url);
+			}
+			//let response = await axios.delete(body.url);
 			const t2 = performance.now();
 			let timeTaken = t2 - t0;
-			console.log(response.data.courses);
-			//res.send(response.data);
 			res.send({data: response.data, status :200+" OK", timeTaken : timeTaken});
+			console.log(response.data);
 		}
 	}
 	catch (error) {
+		const { performance } = require("perf_hooks");
+		const t0 = performance.now();
 		if(error.response) {
 			let {status,statusText} = error.response;
 			console.log("Error::", status,statusText);
-			res.send({errorCode: status, errorMessage: statusText});
+			const t2 = performance.now();
+			let timeTaken = t2 - t0;
+			res.send({errorCode: status, errorMessage: statusText, timeTaken : timeTaken});
 		}
-		else res.send({errorCode: 401, errorMessage: error});
+		else{
+			const t2 = performance.now();
+			let timeTaken = t2 - t0;
+			res.send({errorCode: 401, errorMessage: error, timeTaken : timeTaken});
+		}
 	}
 });
+
+
